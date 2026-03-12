@@ -1,0 +1,23 @@
+{
+	"name": "vinext-microfrontend-demo",
+	"version": "1.0.0",
+	"description": "vinext + Module Federation is now possible",
+	"main": "index.js",
+	"scripts": {
+		"postinstall": "pnpm run build",
+		"dev": "pnpm -r dev:vinext",
+		"build": "pnpm -r build:vinext",
+		"preview": "pnpm -r preview:vinext",
+		"prepare": "husky install"
+	},
+	"author": {
+		"name": "Giorgio Boa",
+		"email": "giorgiob.boa@gmail.com",
+		"url": "https://github.com/gioboa"
+	},
+	"license": "MIT",
+	"devDependencies": {
+		"husky": "^8.0.0",
+		"prettier": "^2.8.2"
+	}
+}
