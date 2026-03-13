@@ -4,10 +4,9 @@
 	"description": "vinext + Module Federation is now possible",
 	"main": "index.js",
 	"scripts": {
-		"postinstall": "pnpm run build",
 		"dev": "pnpm -r dev:vinext",
 		"build": "pnpm -r build:vinext",
-		"preview": "pnpm -r preview:vinext",
+		"preview": "pnpm build && pnpm -r preview:vinext",
 		"prepare": "husky install"
 	},
 	"author": {
