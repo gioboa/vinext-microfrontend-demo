@@ -1,9 +1,9 @@
 'use client';
 
 import * as LocalReact from 'react';
-import { getNextAppReact } from './nextApp';
+import { getVinextReact } from './nextApp';
 
-const { useState } = getNextAppReact(LocalReact);
+const { useState } = getVinextReact(LocalReact);
 
 export default function Counter() {
 	const [count, setCount] = useState(0);

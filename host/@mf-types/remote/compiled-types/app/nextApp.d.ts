@@ -1,1 +1,1 @@
-export declare function getNextAppReact<T>(reactInstance: T): T;
+export declare function getVinextReact<T>(reactInstance: T): T;

@@ -2,16 +2,16 @@
 
 import * as React from 'react';
 import { type ComponentType } from 'react';
-import { getNextAppReact } from './nextApp';
+import { getVinextReact } from './nextApp';
 
 type RemoteComponentState = {
 	error: string | null;
 	RemoteComponent: ComponentType | null;
 };
 
-const react = getNextAppReact(React);
+const react = getVinextReact(React);
 
-(globalThis as typeof globalThis & { __HOST_REACT__?: typeof React }).__HOST_REACT__ = react;
+(globalThis as typeof globalThis & { __VINEXT_REACT__?: typeof React }).__VINEXT_REACT__ = react;
 
 export default function RemoteApp() {
 	const [state, setState] = react.useState<RemoteComponentState>({
