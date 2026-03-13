@@ -1,64 +1,71 @@
-"use client";
+'use client';
 
-import { Component, type ComponentType } from "react";
+import * as React from 'react';
+import { type ComponentType } from 'react';
+import { getNextAppReact } from './nextApp';
 
-type RemoteAppState = {
-  error: string | null;
-  RemoteComponent: ComponentType | null;
+type RemoteComponentState = {
+	error: string | null;
+	RemoteComponent: ComponentType | null;
 };
 
-export default class RemoteApp extends Component<Record<string, never>, RemoteAppState> {
-  state: RemoteAppState = {
-    error: null,
-    RemoteComponent: null,
-  };
+const react = getNextAppReact(React);
 
-  private cancelled = false;
+(globalThis as typeof globalThis & { __HOST_REACT__?: typeof React }).__HOST_REACT__ = react;
 
-  async componentDidMount() {
-    try {
-      const { default: RemoteModule } = (await import("remote/remote-app")) as {
-        default?: ComponentType | null;
-      };
+export default function RemoteApp() {
+	const [state, setState] = react.useState<RemoteComponentState>({
+		error: null,
+		RemoteComponent: null,
+	});
 
-      if (!RemoteModule) {
-        throw new Error("Remote module did not expose a default component.");
-      }
+	react.useEffect(() => {
+		let cancelled = false;
 
-      if (!this.cancelled) {
-        this.setState({ RemoteComponent: RemoteModule });
-      }
-    } catch (loadError) {
-      if (!this.cancelled) {
-        this.setState({
-          error: loadError instanceof Error ? loadError.message : String(loadError),
-        });
-      }
-    }
-  }
+		// @ts-ignore
+		void import('remote/remote-app')
+			.then((module) => {
+				const RemoteModule = (module as { default?: ComponentType | null }).default;
+				if (!RemoteModule) {
+					throw new Error('Remote module did not expose a default component.');
+				}
+				return RemoteModule;
+			})
+			.then((RemoteModule) => {
+				if (!cancelled) {
+					setState({ error: null, RemoteComponent: RemoteModule });
+				}
+			})
+			.catch((loadError) => {
+				if (!cancelled) {
+					setState({
+						error: loadError instanceof Error ? loadError.message : String(loadError),
+						RemoteComponent: null,
+					});
+				}
+			});
 
-  componentWillUnmount() {
-    this.cancelled = true;
-  }
+		return () => {
+			cancelled = true;
+		};
+	}, [setState]);
 
-  render() {
-    if (this.state.error) {
-      return (
-        <div
-          style={{
-            background: "#4b1f1f",
-            borderRadius: "10px",
-            color: "white",
-            maxWidth: "260px",
-            padding: "20px",
-          }}
-        >
-          Failed to load remote: {this.state.error}
-        </div>
-      );
-    }
+	if (state.error) {
+		return (
+			<div
+				style={{
+					background: '#4b1f1f',
+					borderRadius: '10px',
+					color: 'white',
+					maxWidth: '260px',
+					padding: '20px',
+				}}
+			>
+				Failed to load remote: {state.error}
+			</div>
+		);
+	}
 
-    const { RemoteComponent } = this.state;
-    return RemoteComponent ? <RemoteComponent /> : null;
-  }
+	const { RemoteComponent } = state;
+	return RemoteComponent ? <RemoteComponent /> : null;
 }
